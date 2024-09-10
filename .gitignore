@@ -132,9 +132,6 @@ dmypy.json
 .idea
 
 # DB stuff
-alembic/
-alembic.ini
-.alembic.ini
 test.db
 qr_kot.db
 .test.db
