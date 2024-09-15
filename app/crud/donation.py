@@ -2,9 +2,9 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.base import CRUDBase
-from app.services.investment import donation_process
 from app.models import CharityProject, Donation, User
 from app.schemas.donation import DonationCreate
+from app.services.charity_project import CharityProjectService
 
 
 class CRUDDonation(CRUDBase[Donation]):
@@ -22,9 +22,11 @@ class CRUDDonation(CRUDBase[Donation]):
         await session.commit()
         await session.refresh(db_obj)
 
-        db_obj = await donation_process(
-            db_obj, CharityProject, session,
+        charity_service = CharityProjectService(session)
+        db_obj = await charity_service.donation_process(
+            db_obj, CharityProject,
         )
+
         await session.commit()
         await session.refresh(db_obj)
         return db_obj

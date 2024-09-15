@@ -13,8 +13,6 @@ from app.services.charity_project import CharityProjectService
 
 router = APIRouter()
 
-charity_project_service = CharityProjectService()
-
 
 @router.post(
     '/',
@@ -26,8 +24,9 @@ async def create_new_charity_project(
     project: CharityProjectCreate,
     session: AsyncSession = Depends(get_async_session),
 ):
+    charity_project_service = CharityProjectService(session)
     new_project = await charity_project_service.create_project(
-        project, session,
+        project,
     )
     return new_project
 
@@ -42,11 +41,12 @@ async def partially_update_charity_project(
     obj_in: CharityProjectUpdate,
     session: AsyncSession = Depends(get_async_session),
 ):
+    charity_project_service = CharityProjectService(session)
     project = await get_project_or_404(
         project_id, session,
     )
     updated_project = await charity_project_service.update_project(
-        project, obj_in, session,
+        project, obj_in,
     )
     return updated_project
 
@@ -59,7 +59,8 @@ async def partially_update_charity_project(
 async def get_all_charity_projects(
     session: AsyncSession = Depends(get_async_session)
 ):
-    projects = await charity_project_service.get_all_projects(session)
+    charity_project_service = CharityProjectService(session)
+    projects = await charity_project_service.get_all_projects()
     return projects
 
 
@@ -72,10 +73,11 @@ async def remove_charity_project(
     project_id: int,
     session: AsyncSession = Depends(get_async_session)
 ):
+    charity_project_service = CharityProjectService(session)
     project = await get_project_or_404(
         project_id, session,
     )
     removed_project = await charity_project_service.remove_project(
-        project, session,
+        project,
     )
     return removed_project
